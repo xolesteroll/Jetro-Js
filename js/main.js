@@ -154,7 +154,10 @@ const personalMovieDB = {
 
 // console.log(personalMovieDB);
 
+
 $(function () {
+
+  
   $('.slider-top').slick({
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -193,7 +196,7 @@ $(function () {
 
   $('.header__menu-btn').on('click', function () {
     $('.header__menu-list').slideToggle();
-    $(this).toggleClass('active')
+    $(this).toggleClass('active');
   });
 
 
