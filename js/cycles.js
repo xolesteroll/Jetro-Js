@@ -25,3 +25,8 @@ for (let i = 1; i < 10; i++) { // 1 Сощздается переменная i 
   }
   console.log(i);
 }
+
+for (let i = 0; i < 27; i++) {
+  
+  console.log(i);
+}
