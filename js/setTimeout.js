@@ -8,16 +8,39 @@
 
 // Вариант с указанием уже ОБЪЯВЛЕННОЙ функции в качестве аргумента у setTimeout()
 
-const btn = document.querySelector('.btn');
-let timerId,
-    i = 0
+// btn.addEventListener('click', () => {
+//     // const timerId = setTimeout(logger, 2000, 'Hello');
+//     timerId = setInterval(logger, 500, 'Hello');
+//     // После клика на btn каждые две секунды будет срабатывать функция logger
 
-btn.addEventListener('click', () => {
-    // const timerId = setTimeout(logger, 2000, 'Hello');
-    timerId = setInterval(logger, 2000, 'Hello');
-    // После клика на btn каждые две секунды будет срабатывать функция logger
+// });
 
-});
+// Анимация с помощью setInterval
+
+const btn = document.querySelector('.btn'); // Получаем элемент со страницы
+let timerId; 
+
+function myAnimation() { // Создаем функцию анимации
+    const elem = document.querySelector('.box'); // Получаем элемент который будем анимировать
+    let pos = 0; // Начальная позиция элемента
+
+    const id = setInterval(frame, 10); // СОздааем переменную с интервалом и функцией frame в качестве аргумента
+
+    function frame() { // Функция frame
+        if (pos == 300) { // Если позиция будет равна 300
+            clearInterval(id); // Останавливаем интервал
+        } else { // в другом случае
+            pos++; // Увеличиваем позицию на 1
+            elem.style.top = pos + 'px'; // Меняем положение сверху на значение pos 
+            elem.style.left = pos + 'px'; // Меняем положение слева на значение pos 
+        }
+    }
+}
+
+btn.addEventListener('click', myAnimation); // Вешаем обработчик событий на кнопку полученную вначале, при клике на нее будет запускаться 
+// функция myAnimation
+
+
 
 // const timerId = setTimeout(logger, 2000, 'Hello');
 // setTimeout() необязательно вставлять в переменную, это нужно для того чтобы
@@ -28,15 +51,23 @@ btn.addEventListener('click', () => {
 // clearInterval(timerId);
 // Сбрасывваем таймер
 
-function logger(text) {
-    if (i === 3) {
-        clearInterval(timerId);
-    } else {
-        console.log(text);
-        i++;
-    }
+// function logger(text) {
+//     if (i === 3) {
+//         clearInterval(timerId);
+//     }
+//     console.log(text);
+//     i++;
 
-}
+// }
+
+// Проблема setInterval в том что если функция которая в него задана выполняеся дольше чем указаннный интервал времени \
+// ТО он не будет послее ее выполнения выжидать этьот интервал а запустит функцию сразу
+// Чтобы этогно избежать можно использовать рекурсию для метода setTimeout, пример ниже
+
+// let id = setTimeout(function log() {
+//     console.log('hello');
+//     id = setTimeout(log, 500); // Вызываем метод внутри его самого это и называется рекурсией
+// }, 500);
 
 
 
