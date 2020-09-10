@@ -105,11 +105,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     btn.forEach(item => {
-        item.addEventListener("click", (event) => {
-            if (item && item == event.target) {
-                modal.style.display = 'block';
-                console.log(btn);
-            }
+        item.addEventListener("click", () => {
+            modal.classList.add('show');
+            
         });
 
     });

@@ -118,15 +118,22 @@ window.addEventListener('DOMContentLoaded', () => {
         modal = document.querySelector('.modal'), // Получаем само модальное окно
         modalCloseBtn = document.querySelector('[data-close]'); // Получаем кнопку закрытия модального окна
 
+
+
+    function openModal() {
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        // modal.classList.toggle('show'); // КАК ВАРИАНТ
+        document.body.style.overflow = 'hidden'; // Фиксируем положение сайта, чтобы он не скролился
+        // при открытом модальном окне
+        // clearInterval(modalTimerID); // Если модальное окно было открыто 1 раз, то оно больше не будет открываться автоматически
+    }
+
+
     modalTrigger.forEach(btn => {
-        btn.addEventListener('click', () => { // Навешиваем обработчик события на кнопку
-            modal.classList.add('show');
-            modal.classList.remove('hide');
-            // modal.classList.toggle('show'); // КАК ВАРИАНТ
-            document.body.style.overflow = 'hidden'; // Фиксируем положение сайта, чтобы он не скролился
-            // при открытом модальном окне
-        });
+        btn.addEventListener('click', openModal);
     });
+
 
     function closeModal() {
         modal.classList.remove('show');
@@ -161,10 +168,92 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // const modalTimerID = setTimeout(openModal, 3000); // через 2 секунды модальное окно откроется автоматически
 
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            // Если отскроленное пространство сайта + высотклиентского окна браузера = общей высоте документа 
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll); // Удаляем обработчик события после того как 
+            // Его функция выполнилась один раз
+        }
+    }
 
-
+    window.addEventListener('scroll', showModalByScroll);
 
     // Modal End
+
+    // Используем классы для карточек
+
+    class MenuCard {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
+            // Последним аргшументом используем rest оператор
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.descr = descr;
+            this.price = price;
+            this.classes = classes;
+            this.parent = document.querySelector(parentSelector); // Родитель в который будем помещать созданные карточки
+            this.transfer = 27; // курс обмена доллара на гривну
+            this.changeToUAH(); // вызов метода который будет переводить получаемую цену в долларах в гривны
+        }
+
+        changeToUAH() { // метод для перевода цены из доллара в гривну
+            this.price = this.price * this.transfer;
+        }
+
+        render() { // метод который будет рендерить созданные карточки в документ
+            const element = document.createElement('div'); // создание нового дива
+            if (this.classes.length == 0) {
+                this.element = 'menu__item';
+                element.classList.add(this.element);
+            } else {
+                this.classes.forEach(className => element.classList.add(className));
+            }
+
+            // Так как мы не знаем сколько классов в итоге будет у элемента мы,
+            // используя rest оператор получаем все классы в виде массива, 
+            // а потом путем перебора этого массива добавляем каждый класс элементу
+            element.innerHTML = ` 
+                <img src=${this.src} alt=${this.alt}>
+                <h3 class="menu__item-subtitle">${this.title}</h3>
+                <div class="menu__item-descr">${this.descr}</div>
+                <div class="menu__item-divider"></div>
+                <div class="menu__item-price">
+                    <div class="menu__item-cost">Цена:</div>
+                    <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                </div>
+            `; // Вставляем в новый элемент html код с заданными параметрами
+            this.parent.append(element); // Вставляем полученный уже элемент в родителя
+        }
+    }
+
+    new MenuCard(
+        "img/tabs/vegy.jpg",
+        "vegy",
+        "Меню 'Фитнес'",
+        "Меню 'Фитнес' - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!",
+        9,
+        ".menu__field .container"
+    ).render();
+
+    new MenuCard(
+        "img/tabs/elite.jpg",
+        "elite",
+        "Меню 'Премиум'",
+        "В меню 'Премиум' мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!",
+        15,
+        ".menu__field .container"
+    ).render();
+
+    new MenuCard(
+        "img/tabs/post.jpg",
+        "post",
+        "Меню 'Постное'",
+        "Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков. ",
+        10,
+        ".menu__field .container"
+    ).render();
 
 });
