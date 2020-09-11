@@ -115,8 +115,8 @@ window.addEventListener('DOMContentLoaded', () => {
     // Modal Start
 
     const modalTrigger = document.querySelectorAll('[data-modal]'), // Поулчаем кнопки для открытия модального окна
-        modal = document.querySelector('.modal'), // Получаем само модальное окно
-        modalCloseBtn = document.querySelector('[data-close]'); // Получаем кнопку закрытия модального окна
+        modal = document.querySelector('.modal'); // Получаем само модальное окно
+    // modalCloseBtn = document.querySelector('[data-close]'); // Получаем кнопку закрытия модального окна
 
 
 
@@ -126,7 +126,7 @@ window.addEventListener('DOMContentLoaded', () => {
         // modal.classList.toggle('show'); // КАК ВАРИАНТ
         document.body.style.overflow = 'hidden'; // Фиксируем положение сайта, чтобы он не скролился
         // при открытом модальном окне
-        // clearInterval(modalTimerID); // Если модальное окно было открыто 1 раз, то оно больше не будет открываться автоматически
+        clearInterval(modalTimerID); // Если модальное окно было открыто 1 раз, то оно больше не будет открываться автоматически
     }
 
 
@@ -142,7 +142,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    modalCloseBtn.addEventListener('click', closeModal);
+    // modalCloseBtn.addEventListener('click', closeModal);
 
 
     // modalCloseBtn.addEventListener('click', () => {
@@ -156,7 +156,7 @@ window.addEventListener('DOMContentLoaded', () => {
     modal.addEventListener('click', (e) => { // Делаем так чтобы при клике на пустое пространство
         // Вокруг модального окна оно так же закрывалось
 
-        if (e.target && e.target == modal) {
+        if (e.target == modal || e.target.getAttribute('[data-close]') == '') {
             closeModal();
         }
     });
@@ -168,7 +168,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // const modalTimerID = setTimeout(openModal, 3000); // через 2 секунды модальное окно откроется автоматически
+    const modalTimerID = setTimeout(openModal, 50000); // через 2 секунды модальное окно откроется автоматически
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -255,5 +255,87 @@ window.addEventListener('DOMContentLoaded', () => {
         10,
         ".menu__field .container"
     ).render();
+
+    // Работа с сервером для форм
+
+    const forms = document.querySelectorAll('form'),
+        message = {
+            loading: 'img/form/spinner.svg',
+            success: 'Спасибо! Скоро мы с вами свяжемся',
+            failure: 'Что то пошло не так...'
+        };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const statusMessage = document.createElement('img');
+            statusMessage.src = message.loading;
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
+            // form.append(statusMessage);
+            form.insertAdjacentElement('afterend', statusMessage);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+
+            request.setRequestHeader('Content-type', 'application/json');
+
+            const formData = new FormData(form); // Чтобы работать с формой с помощью такого конструктора необходимо для всех unput всегда указывать аттрибут name
+
+            const object = {};
+            formData.forEach(function (value, key) {
+                object[key] = value;
+            });
+
+            const json = JSON.stringify(object);
+
+            request.send(json);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    showThanksModal(message.success);
+                    form.reset();
+                    statusMessage.remove();
+                } else {
+                    showThanksModal(message.failure);
+                }
+            });
+
+        });
+    }
+
+    function showThanksModal(message) {
+        const prevModalDialog = document.querySelector('.modal__dialog');
+
+        prevModalDialog.classList.add('hide');
+        openModal();
+
+        const thanksModal = document.createElement('div');
+        thanksModal.classList.add('modal__dialog');
+        thanksModal.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(thanksModal);
+        setTimeout(() => {
+            thanksModal.remove();
+            prevModalDialog.classList.add('show');
+            prevModalDialog.classList.remove('hide');
+            closeModal();
+        }, 4000);
+    }
+
+
 
 });
