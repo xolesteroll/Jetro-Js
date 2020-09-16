@@ -1,0 +1,22 @@
+{
+  "name": "jetro",
+  "version": "1.0.0",
+  "description": "learnjs",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xolesteroll/Jetro-Js.git"
+  },
+  "author": "ANton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xolesteroll/Jetro-Js/issues"
+  },
+  "homepage": "https://github.com/xolesteroll/Jetro-Js#readme",
+  "devDependencies": {
+    "json-server": "^0.16.1"
+  }
+}
